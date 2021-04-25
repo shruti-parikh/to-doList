@@ -12,23 +12,27 @@
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
         <title> List</title>
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Original+Surfer&display=swap" rel="stylesheet">
+        
         <style>
             /* ## */
             body{
                 background-color:  rgba(16, 54, 85);
-                /* font-family: Copperplate, Papyrus, fantasy; */
+                background-image: url("https://www.stayathomemum.com.au/wp-content/uploads/2018/04/Free-Motivational-Desktop-Backgrounds-Fox-Hazel.jpg");
+                background-size: 100%;
                 font-weight: bold;
-                font-family: Garamond, serif;
-                /* background: url("https://i.pinimg.com/originals/6e/73/80/6e7380534adb2d37ab070cca34e1f30f.jpg"); */
+                font-family: 'Original Surfer', cursive;
+               
             }
             .card{
                 
-                
-                margin-top: 10%;
-                /* margin-bottom: 20%; */
-                /* margin-left: 30%; */
-                /* margin-right:30%; */
-                max-width: 500px;
+                background: rgba(0, 0, 0, 0.5);
+                margin-top: 5%;
+                text-align: center;
+                max-width: 600px;
+                position: absolute;
+                left: 120px;
             }
             #head {
                 text-align: center;
@@ -44,100 +48,202 @@
             }
             input[type=text] {
                 width: 100%;
-                padding: 12px 20px;
-                margin: 8px 0;
+                padding: 10px 15px;
+                margin: 6px 0;
                 box-sizing: border-box;
-                border:2px;
+                border:1px;
                 border-bottom: 2px solid rgb(33, 77, 119);
             }
             #two {
                 
                     border: none;
                     background-color: inherit;
-                    padding: 10px 24px;
-                    font-size: 20px;
+                    padding: 5px 15px;
+                    font-size: 15x;
                     cursor: pointer;
                     display: inline-block;
+                    background-color:rgb(19, 44, 68);
+                    color : whitesmoke
+            }
+            #two:hover{
+                background-color:rgb(34, 58, 80);
+            }
+            .inner {
+                margin-left: 3px;
+            }
+            table{
+                border: 2px solid;
+                background: white;
             }
 
-            #two:hover {
-                background-color:rgba(8, 31, 53)
+            td {
+                color: rgb(33, 40, 43);
             }
 
-                
-            
-            
         </style>
-    </head>
-    <body>
-        <center><div class="card">
-            <div class="card-header" id="head">To-Do List</div>
-                <div class="card-body" id="todo" >
+        </head>
+        <body>
+            <div class="card">
+                <div class="card-header" id="head">To-Do List</div>
+                    <div class="card-body" id="todo" >
+                    </div>
                 </div>
             </div>
-        </div></center>
 
 
-        <script type="text/babel">
-            class Task extends React.Component {
-                constructor(props){
-                    super(props)
-                    this.state={
-                        inputText:"",
-                        lis:[]
+            <script type="text/babel">
+                class Task extends React.Component {
+                    constructor(props){
+                        super(props)
+                        this.state={
+                            inputText:"",
+                            lis:[],
+                            deadline:"",
+                            index: 0,
+                            taskCopy:[]
+                        };
+                    }
+
+                    componentDidMount() {
+                        setTimeout(alert("Mounting !!"), 5000)
                         
+                        let task = localStorage.getItem("lis")
+                        this.getTodo();
+                        console.log(task)
+                        if (task != null){
+                            this.setState({lis : JSON.parse(task)})
+                            // console.log(lis)
+                        }
+                        window.addEventListener("beforeunload", () => {
+                        if (this.state.lis.length > 0) {
+                            localStorage.setItem("lis", JSON.stringify(this.state.lis));                        
+                        }
+                        });
+   
+                    }
+                    getTodo=()=>{
+                        fetch('https://raw.githubusercontent.com/shruti-parikh/to-doList/main/file1.json')
+                        .then(resp=>resp.json())
+                        .then(todo=> {   
+                         this.setState({lis:todo});
+                        });
+                    }
 
-                    };
-                }
+                    componentWillUnmount(){
 
-                render(){
-                    return(
-                        <div>
-                            <input id = "one" type = "text" onChange={this.add} placeholder="Enter your To-Do Task" name='inputText' value= {this.state.inputText}/>
-                            <button id = "two" type="button" class="btn btn-outline-primary" onClick = {this.addlist}>Add Item</button> 
-                                <br/><br/>
-                                <table className="table table-borderless">
-                                    <thead>
-                                        <tr><th scope="col">Tasks to do </th>
-                                        <th scope="col">Status</th>
-                                        </tr>
-                                    </thead> 
-                                
-                                    { this.state.lis.map((elem, index) =>
-                                        <tbody key={index}>
-                                            <tr >
-                                                <td>{elem}</td>
-                                                <td><button  type="button" class="btn btn-outline-danger" onClick ={ ()=>this.delete(index)}>Delete</button></td>
+                    }
+
+
+
+                    render(){
+                        return(
+                            <div>
+                                <input id = "one" type = "text" onChange={this.add} placeholder="Enter your To-Do Task" name='inputText' value= {this.state.inputText}/>
+                                <input id = "one" type = "time" onChange={this.add} placeholder="Deadline" name='deadline' value= {this.state.deadline}/>
+                                <button id = "two"  onClick = {this.addlist}>Add Item</button> 
+                                <button id = "two"  onClick = {this.save}>save Item</button> 
+                                    <br/><br/>
+                                    <table className="table table-borderless">    
+                                        { this.state.lis.map((elem, i) =>
+                                            <tbody key={i}>
+                                                <tr>
+                                                    <td>{elem[0]}</td>
+                                                    <td>{elem[1]}</td>
+                                                    <td><button  type="button" className="btn btn-danger" onClick ={ ()=>this.delete(i)}>Delete</button>
+                                                    <button  type="button" className="btn btn-primary inner" onClick ={ ()=>this.update(i)}>Update</button></td>
+                                                </tr>  
+                                            </tbody>
+                                            
+                                        )}
+                                </table>
+                            <p style = {{color:"white"}}>  {this.state.lis.length} tasks to achieve</p>
+                            <table>
+                                    <h1>Recycle Bin</h1>
+                                    <tbody> 
+                                        {this.state.taskCopy.map((rtask,index) =>
+                                            <tr key={index}>
+                                                <td >{rtask[0][0]}</td>
+                                                <td>{rtask[0][1]}</td>
+                                                <td >
+                                                    <div id="button">
+                                                        <button type="button" class="btn btn-danger" value={index} onClick={()=>this.addRec(index)}>Delete</button>
+                                                        <button type="button" class="btn btn-primary" value={index} onClick={()=>this.restore(index)}>Restore</button>
+                                                    </div>
+                                                </td>
                                             </tr>  
-                                        </tbody>
-                                        
-                                    )}
-                            </table>
-                        <p>  {this.state.lis.length} tasks to achieve</p>
-                        </div>
-                    )
-                }
-                delete = (i) =>{
-                   
-                    var temp = [...this.state.lis]
-                    temp.splice(i, 1)
-                    this.setState({lis:temp})
+                                        )}
+                                    </tbody>
+                                </table>
+                            
+                            </div>
+                        )
+                    }
+                    save = (ele) =>{
+                        // console.log(this.state.index)
+                        var copylis = [...this.state.lis]
+                        copylis[this.state.index] = [this.state.inputText, this.state.deadline]
+                        
+                        this.setState({lis:copylis})
+                        this.setState({inputText:''})
+                        this.setState({deadline:''})
+                    }
                     
+                    delete = (i) =>{
+                        confirm("Congradulations! tou have finished one task")
+                        var temp = [...this.state.lis]
+                        temp.splice(i, 1)
+                        
+                        this.state.taskCopy = [...this.state.taskCopy,this.state.lis.splice(i,1)];
+                        console.log(this.state.taskCopy)
+                        this.setState({lis:temp})
+                        this.setState({taskCopy: this.state.taskCopy});
+                    }
+                    
+                    update = (i) => {
+                        var editcopy = [...this.state.lis];
+                        this.setState({index : i})
+                        this.setState({inputText :editcopy[i][0]})
+                        this.setState({deadline :editcopy[i][1]})
+                    }
 
+                    add = (ele) => {
+                        this.setState({[ele.target.name]: ele.target.value } )
+                    }
+                    // recycle = (ele) => {
+                    //     ReactDOM.render(<Rec taskCopy = {this.state.taskCopy} lis = {this.state.lis} />,document.querySelector("#todo"));
+                    // }
+
+                    addlist = (e) => {
+                        this.setState({lis:[...this.state.lis, [this.state.inputText,this.state.deadline]]})
+                        this.setState({inputText: ""});
+                        this.setState({deadline: ""})  
+                    }
+                    addRec(e){
+                        
+                        var delvalue=this.state.taskCopy.splice(e,1);
+                        this.setState({taskCopy:this.state.taskCopy});
+                        // this.setState({lis:this.state.taskCopy})
+                        
+                                                
+                    }
+                    restore (e){
+                        var delvalue=this.state.taskCopy.splice(e,1);
+                        // console.log(delvalue[0][0])
+                        var nw = [...this.state.lis, delvalue[0][0]]
+                        // console.log(nw)
+                        this.setState({lis:nw})
+
+
+                        
+                    }
+
+                          
                 }
-                add = (ele) => {
-                    this.setState({inputText: ele.target.value } )
+                ReactDOM.render(<Task/>, document.getElementById("todo"))
 
-                }
+              
 
-                addlist = (e) => {
-                    this.setState({lis:[...this.state.lis, this.state.inputText]})
-                    this.setState({inputText: ""})
-                    // console.log(this.state.lis)
-                }
-            }
-            ReactDOM.render(<Task/>, document.getElementById("todo"))
-
-        </script>
-    </body>
+            </script>
+        </body>
 </html>
+
